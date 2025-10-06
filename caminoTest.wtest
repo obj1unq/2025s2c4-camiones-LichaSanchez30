@@ -1,3 +1,4 @@
+import wollok.mirror.*
 import camion.*
 import cosas.*
 import almacenamiento.*
@@ -194,7 +195,7 @@ describe "Camiones"{
         assert.notThat(bateriaAntiaerea.estaCargada())
     }
 
-    test "Almacen"{
+    test "Almacen Caso: ruta 9 exitoso"{
         camion.cargar(bateriaAntiaerea)
         camion.cargar(bumblebee)
         camion.cargar(residuosRadiactivos)
@@ -202,5 +203,39 @@ describe "Camiones"{
         camion.transportar(almacen, ruta9)
         assert.equals([bateriaAntiaerea,bumblebee, residuosRadiactivos], almacen.cosasAlmacen())
         assert.equals(#{}, camion.cosas())
+    }
+    test "Almacen Caso: ruta 9 fallido por peligrosidad "{
+        bumblebee.estadoTransformado("robot")
+        camion.cargar(bumblebee)
+        camion.transportar(almacen, ruta9)
+        assert.equals([bumblebee], almacen.cosasAlmacen())
+    }
+
+    test "Almacen Caso: ruta 9 fallido por exceso de peso"{
+        arenaGranel.peso(2000)
+        camion.cargar(arenaGranel)
+        camion.transportar(almacen, ruta9)
+        assert.equals([arenaGranel], almacen.cosasAlmacen())
+    }
+
+    test "Almacen Caso: caminos vecinales exitoso"{
+        caminosVecinales.pesoPermitido(2000)
+        camion.cargar(bumblebee)
+        camion.cargar(residuosRadiactivos)
+        camion.cargar(knightRider)
+        camion.cargar(arenaGranel)
+        camion.transportar(almacen, caminosVecinales)
+        assert.equals(#{}, camion.cosas())
+        assert.equals([bumblebee, residuosRadiactivos, knightRider, arenaGranel ], almacen.cosasAlmacen())
+    }
+
+    test "Almacen Caso: caminos vecinales fallido"{
+        const cosasAlmacen = [knightRider, residuosRadiactivos]
+        caminosVecinales.pesoPermitido(300)
+        camion.cargar(bumblebee)
+        camion.cargar(arenaGranel)
+        camion.transportar(almacen, caminosVecinales)
+        assert.equals([knightRider, residuosRadiactivos], cosasAlmacen)
+        assert.equals(#{bumblebee, arenaGranel}, camion.cosas())        
     }
 }
