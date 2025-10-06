@@ -1,4 +1,5 @@
 import cosas.*
+import almacenamiento.*
 
 object camion {
 	const property cosas = #{}
@@ -60,9 +61,8 @@ object camion {
 		}
 	}
 
-	method puedeCircular() = not self.estaExcedido() && not cosas.any{
-		cosa => cosa.peligrosidad() > ruta.peligrosidad()
-	}
+	method puedeCircular(ruta) = ruta.puedeCircular() 
+	
 	
 	method pesoDeLasCosas() = cosas.map{
 		cosa => cosa.peso()
@@ -79,6 +79,12 @@ object camion {
 	method sufreAccidente() {
 		cosas.forEach{
 			cosa => cosa.efectoPorAccidente()
+		}
+	}
+
+	method transportar(destino, camino) {
+		if(self.puedeCircular(camino)){
+				destino.almacenar()
 		}
 	}
 

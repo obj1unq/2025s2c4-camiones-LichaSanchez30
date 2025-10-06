@@ -1,3 +1,4 @@
+import camion.*
 object knightRider {
 	method peso() = 500 
 	method peligrosidad() = 10 
@@ -137,6 +138,17 @@ object embalajeDeSeguridad {
 }
 
 
-object ruta {
-	const property peligrosidad = 15
+object ruta9 {
+	const property peligrosidad = 20
+
+	method puedeCircular() = not camion.estaExcedido() && not camion.cosas().any{
+		cosa => cosa.peligrosidad() > self.peligrosidad() }
+}
+
+object caminosVecinales {
+	var property pesoPermitido = 0 
+
+	method puedeCircular() = 	pesoPermitido > camion.cosas().sum{
+								cosas => cosas.peso()
+								}
 }

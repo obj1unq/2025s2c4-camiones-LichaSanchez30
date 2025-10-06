@@ -1,6 +1,6 @@
 import camion.*
 import cosas.*
-
+import almacenamiento.*
 describe "Camiones"{
     test "probrando las cosas para cargar"{
         bumblebee.estadoTransformado("robot")
@@ -101,7 +101,7 @@ describe "Camiones"{
         camion.cargar(bumblebee)
         paqueteLadrillos.cantLadrillos(300)
         camion.cargar(paqueteLadrillos)
-        assert.that(camion.puedeCircular())
+        assert.that(camion.puedeCircular(ruta9))
     }
 
     test "Probando si puede circular con Bumblebee en auto y un paquete de 400 ladrillos"{
@@ -109,7 +109,7 @@ describe "Camiones"{
         camion.cargar(bumblebee)
         paqueteLadrillos.cantLadrillos(400)
         camion.cargar(paqueteLadrillos)
-        assert.notThat(camion.puedeCircular())
+        assert.notThat(camion.puedeCircular(ruta9))
     }
 
     test "Probando si puede circular con Bumblebee en robot y un paquete de 300 ladrillos"{
@@ -117,7 +117,7 @@ describe "Camiones"{
         paqueteLadrillos.cantLadrillos(300)
         camion.cargar(bumblebee)
         camion.cargar(paqueteLadrillos)
-        assert.notThat(camion.puedeCircular())
+        assert.notThat(camion.puedeCircular(ruta9))
     }
 
     test "El peso de todas las cosas"{
@@ -157,22 +157,6 @@ describe "Camiones"{
         assert.equals(4, camion.totalDeBultos())
     }
 
-    /*
-        Suponiendo que el camión tiene:
-        - El contenedor portuario con Knight Rider y Bumblebee en modo auto.
-        - El embalaje de seguridad envolviendo 30 kg de residuos radiactivos. 
-        - 50 kg de arena a granel.
-        - Un paquete de 100 ladrillos.
-        - La batería antiaérea cargada.  
-        Al producirse un accidente:
-        - Bumblebee queda en modo robot.
-        - Residuos radiactivos quedan con 30 kg de peso.
-        - La arena queda con 70 kg.
-        - El paquete de ladrillos queda con 88 ladrillos.
-        - La batería antiaérea queda descargada.
-    
-    */
-
     test "Accidente caso 1"{
         contenedorPortuario.cargar(knightRider)
         bumblebee.estadoTransformado("auto")
@@ -210,4 +194,13 @@ describe "Camiones"{
         assert.notThat(bateriaAntiaerea.estaCargada())
     }
 
+    test "Almacen"{
+        camion.cargar(bateriaAntiaerea)
+        camion.cargar(bumblebee)
+        camion.cargar(residuosRadiactivos)
+        almacen.almacenar()
+        camion.transportar(almacen, ruta9)
+        assert.equals([bateriaAntiaerea,bumblebee, residuosRadiactivos], almacen.cosasAlmacen())
+        assert.equals(#{}, camion.cosas())
+    }
 }
